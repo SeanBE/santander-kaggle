@@ -29,7 +29,6 @@ print colCount - trainData.shape[1], 'columns removed from test/train data.'
 
 # stackoverflow.com/questions/python-pandas-remove-duplicate-columns
 
-
 def duplicate_columns(frame):
     groups = frame.columns.to_series().groupby(frame.dtypes).groups
     dups = []
@@ -58,15 +57,9 @@ testData.drop(dupCols, axis=1, inplace=True)
 
 print colCount - trainData.shape[1], 'columns removed from test/train data.'
 
-X = trainData.drop([idCol, targetCol], axis=1)
-Y = trainData[targetCol]
+x = trainData.drop([idCol, targetCol], axis=1)
+y = trainData[targetCol]
 
-# EVERYTHING above from notebook.
-
-x = np.array(X)
-y = np.array(Y)
-
-# Scaling time!
 scaler = StandardScaler()
 scaler.fit(x)
 x = scaler.transform(x)
@@ -87,7 +80,9 @@ loss,acc = model.evaluate(test_X, test_y, batch_size=32)
 print loss,acc
 
 testX = testData.drop([idCol], axis=1)
-testX = np.array(testX)
+scaler.fit(testX)
+testX = scaler.transform(testX)
+
 testY = model.predict_proba(testX)
 
 submission = pd.DataFrame({idCol: testData[idCol], targetCol: testY[:,0]})
